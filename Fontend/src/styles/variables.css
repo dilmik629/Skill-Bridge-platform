@@ -1,0 +1,161 @@
+/* ============================================
+   SKILL-BRIDGE — CSS VARIABLES (Design Tokens)
+   ============================================ */
+
+:root {
+
+  /* ─── PRIMARY COLORS ─────────────────────── */
+  --color-primary:        #6D28D9;   /* Deep violet — main brand */
+  --color-primary-dark:   #4C1D95;   /* Hover / active state */
+  --color-primary-light:  #A78BFA;   /* Subtle accents */
+  --color-primary-bg:     #EDE4FE;   /* Violet background tint */
+
+  /* ─── SECONDARY / ACCENT ─────────────────── */
+  --color-accent:         #DB2777;   /* Pink/Magenta — highlights, badges */
+  --color-accent-dark:    #9D174D;
+  --color-accent-bg:      #FCE2EF;
+
+  /* ─── EXTRA "SHED" PALETTE (cards, icons, tags) ── */
+  --color-violet:         #6D28D9;
+  --color-violet-bg:      #E4D4FE;
+  --color-pink:           #DB2777;
+  --color-pink-bg:        #FBD2E6;
+  --color-cyan:           #0891B2;
+  --color-cyan-bg:        #CBF3FB;
+  --color-amber:          #D97706;
+  --color-amber-bg:       #FDE9C2;
+  --color-mint:           #059669;
+  --color-mint-bg:        #C9F5E3;
+  --color-blue:           #2563EB;
+  --color-blue-bg:        #D2E3FE;
+
+  /* ─── DARK SURFACE (CTA / footer) ─────────── */
+  --color-dark:           #1E1245;   /* deep violet-navy */
+  --color-dark-2:         #150C33;
+  --color-dark-text:      rgba(255,255,255,.72);
+  --color-dark-border:    rgba(255,255,255,.12);
+
+  /* ─── GRADIENTS ───────────────────────────── */
+  --gradient-primary:     linear-gradient(135deg, #6D28D9 0%, #A21CAF 100%);
+  --gradient-hero:        linear-gradient(135deg, rgba(30,18,69,.90) 0%, rgba(45,24,90,.85) 45%, rgba(157,23,77,.80) 100%);
+  --gradient-text:        linear-gradient(90deg, #7C3AED, #EC4899);
+  --gradient-cta:         linear-gradient(120deg, #1E1245 0%, #5B21B6 55%, #9D174D 100%);
+
+  /* ─── GLASSMORPHISM ───────────────────────── */
+  --glass-bg:             rgba(255, 255, 255, 0.55);
+  --glass-bg-strong:      rgba(255, 255, 255, 0.75);
+  --glass-border:         rgba(255, 255, 255, 0.6);
+  --glass-shadow:         0 8px 32px rgba(109, 40, 217, 0.18);
+  --glass-blur:           blur(16px);
+
+  /* ─── SUCCESS / WARNING / ERROR / INFO ───── */
+  --color-success:        #10B981;
+  --color-success-bg:     #D1FAE5;
+  --color-warning:        #F59E0B;
+  --color-warning-bg:     #FEF3C7;
+  --color-error:          #EF4444;
+  --color-error-bg:       #FEE2E2;
+  --color-info:           #3B82F6;
+  --color-info-bg:        #DBEAFE;
+
+  /* ─── NEUTRALS ───────────────────────────── */
+  --color-white:          #FFFFFF;
+  --color-bg:             #F7F2FE;   /* Page background — soft violet tint */
+  --color-surface:        #FFFFFF;   /* Cards, modals */
+  --color-border:         #EAE3FB;   /* Borders, dividers — violet-tinted */
+  --color-border-focus:   #7C3AED;   /* Input focus ring */
+
+  /* ─── TEXT ───────────────────────────────── */
+  --color-text-primary:   #0F172A;   /* Headings */
+  --color-text-secondary: #475569;   /* Body, labels */
+  --color-text-muted:     #94A3B8;   /* Placeholders, hints */
+  --color-text-inverse:   #FFFFFF;   /* Text on dark bg */
+
+  /* ─── LEVEL BADGE COLORS ─────────────────── */
+  --color-beginner:       #10B981;   /* Green */
+  --color-beginner-bg:    #D1FAE5;
+  --color-intermediate:   #F59E0B;   /* Amber */
+  --color-intermediate-bg:#FEF3C7;
+  --color-advanced:       #EF4444;   /* Red */
+  --color-advanced-bg:    #FEE2E2;
+
+  /* ─── LEADERBOARD RANK COLORS ────────────── */
+  --color-gold:           #F59E0B;
+  --color-silver:         #94A3B8;
+  --color-bronze:         #B45309;
+
+  /* ─── TYPOGRAPHY ─────────────────────────── */
+  --font-primary:   'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-display:   'Outfit', 'Inter', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:    0.75rem;    /* 12px */
+  --text-sm:    0.875rem;   /* 14px */
+  --text-base:  1rem;       /* 16px */
+  --text-lg:    1.125rem;   /* 18px */
+  --text-xl:    1.25rem;    /* 20px */
+  --text-2xl:   1.5rem;     /* 24px */
+  --text-3xl:   1.875rem;   /* 30px */
+  --text-4xl:   2.25rem;    /* 36px */
+  --text-5xl:   3rem;       /* 48px */
+
+  --font-normal:    400;
+  --font-medium:    500;
+  --font-semibold:  600;
+  --font-bold:      700;
+  --font-extrabold: 800;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.75;
+
+  /* ─── SPACING ────────────────────────────── */
+  --space-1:   0.25rem;   /* 4px  */
+  --space-2:   0.5rem;    /* 8px  */
+  --space-3:   0.75rem;   /* 12px */
+  --space-4:   1rem;      /* 16px */
+  --space-5:   1.25rem;   /* 20px */
+  --space-6:   1.5rem;    /* 24px */
+  --space-8:   2rem;      /* 32px */
+  --space-10:  2.5rem;    /* 40px */
+  --space-12:  3rem;      /* 48px */
+  --space-16:  4rem;      /* 64px */
+  --space-20:  5rem;      /* 80px */
+  --space-24:  6rem;      /* 96px */
+
+  /* ─── BORDER RADIUS ──────────────────────── */
+  --radius-sm:   0.25rem;   /* 4px  */
+  --radius-md:   0.5rem;    /* 8px  */
+  --radius-lg:   0.75rem;   /* 12px */
+  --radius-xl:   1rem;      /* 16px */
+  --radius-2xl:  1.5rem;    /* 24px */
+  --radius-full: 9999px;    /* pill / circle */
+
+  /* ─── SHADOWS ────────────────────────────── */
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md:  0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg:  0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl:  0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-primary: 0 4px 14px rgba(124, 58, 237, 0.3);
+
+  /* ─── TRANSITIONS ────────────────────────── */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ─── LAYOUT ─────────────────────────────── */
+  --container-max:     1200px;
+  --navbar-height:     68px;
+  --sidebar-width:     260px;
+  --footer-height:     80px;
+
+  /* ─── Z-INDEX ─────────────────────────────── */
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-navbar:    300;
+  --z-sidebar:   400;
+  --z-modal:     500;
+  --z-toast:     600;
+  --z-tooltip:   700;
+}

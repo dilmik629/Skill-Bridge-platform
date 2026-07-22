@@ -1,0 +1,163 @@
+/* ============================================
+   SKILL-BRIDGE — GLASSMORPHISM & GRADIENT UTILITIES
+   Purple / glass "wow" design layer
+   ============================================ */
+
+/* ─── GLASS SURFACES ─────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--glass-shadow);
+  padding: var(--space-6);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(124, 58, 237, 0.18);
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+}
+
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  color: var(--color-primary-dark);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.1);
+}
+
+/* ─── GRADIENT TEXT & SURFACES ───────────────── */
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.gradient-surface {
+  background: var(--gradient-primary);
+  color: #fff;
+}
+
+.gradient-surface-soft {
+  background: var(--gradient-hero);
+}
+
+/* ─── SHED-COLOR CARDS (tinted glass) ────────── */
+.shed-card {
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  border: 1px solid;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.shed-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(124, 58, 237, 0.12);
+}
+
+.shed-card--violet { background: linear-gradient(160deg, #E4D4FE 0%, #F3EAFF 75%); border-color: #C9A9F5; }
+.shed-card--pink   { background: linear-gradient(160deg, #FBD2E6 0%, #FCE3F0 75%); border-color: #F2A0C7; }
+.shed-card--cyan   { background: linear-gradient(160deg, #CBF3FB 0%, #E0F9FC 75%); border-color: #7FDCEE; }
+.shed-card--amber  { background: linear-gradient(160deg, #FDE9C2 0%, #FEF1DA 75%); border-color: #F3C46A; }
+.shed-card--mint   { background: linear-gradient(160deg, #C9F5E3 0%, #E1FAF0 75%); border-color: #6FDDB2; }
+.shed-card--blue   { background: linear-gradient(160deg, #D2E3FE 0%, #E5EFFE 75%); border-color: #8AB4FA; }
+
+/* ─── ICON CHIPS ──────────────────────────────── */
+.icon-chip {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.icon-chip--violet { background: #D4BBFC; }
+.icon-chip--pink   { background: #F7ACCE; }
+.icon-chip--cyan   { background: #8FE4F2; }
+.icon-chip--amber  { background: #F8D28A; }
+.icon-chip--mint   { background: #8EEAC6; }
+.icon-chip--blue   { background: #ADCAFC; }
+
+/* ─── DECORATIVE BLOBS ────────────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── MOTION ──────────────────────────────────── */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-14px); }
+}
+.floaty { animation: floaty 5.5s ease-in-out infinite; }
+.floaty-slow { animation: floaty 8s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floaty, .floaty-slow { animation: none; }
+}
+
+/* ─── DARK SURFACE (CTA / footer sections) ───── */
+.dark-surface {
+  background: var(--color-dark);
+  color: var(--color-dark-text);
+}
+.dark-surface h1, .dark-surface h2, .dark-surface h3 { color: #fff; }
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+.avatar-stack img,
+.avatar-stack .avatar-stack__item {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -10px;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: var(--font-semibold);
+  color: #fff;
+}
+.avatar-stack img:first-child,
+.avatar-stack .avatar-stack__item:first-child {
+  margin-left: 0;
+}

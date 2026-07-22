@@ -1,0 +1,129 @@
+/* ============================================
+   SKILL-BRIDGE — Toast Styles
+   ============================================ */
+
+/* ─── Container ──────────────────────────────── */
+.toast-container {
+  position: fixed;
+  top: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 380px;
+  width: calc(100vw - var(--space-12));
+  pointer-events: none;
+}
+
+/* ─── Single Toast ───────────────────────────── */
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid transparent;
+  pointer-events: all;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Enter / Exit Animations ────────────────── */
+.toast--enter {
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast--exit {
+  animation: toastSlideOut 0.3s ease forwards;
+}
+
+/* ─── Types ──────────────────────────────────── */
+.toast--success {
+  border-left-color: var(--color-success);
+}
+.toast--success .toast__icon {
+  color: var(--color-success);
+  background-color: var(--color-success-bg);
+}
+
+.toast--error {
+  border-left-color: var(--color-error);
+}
+.toast--error .toast__icon {
+  color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+.toast--warning {
+  border-left-color: var(--color-warning);
+}
+.toast--warning .toast__icon {
+  color: var(--color-warning);
+  background-color: var(--color-warning-bg);
+}
+
+.toast--info {
+  border-left-color: var(--color-info);
+}
+.toast--info .toast__icon {
+  color: var(--color-info);
+  background-color: var(--color-info-bg);
+}
+
+/* ─── Icon ───────────────────────────────────── */
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+/* ─── Message ────────────────────────────────── */
+.toast__message {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  line-height: var(--leading-normal);
+  padding-top: var(--space-1);
+}
+
+/* ─── Close Button ───────────────────────────── */
+.toast__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.toast__close:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+/* ─── Mobile ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .toast-container {
+    top: auto;
+    bottom: var(--space-4);
+    right: var(--space-3);
+    left: var(--space-3);
+    max-width: 100%;
+    width: auto;
+  }
+}

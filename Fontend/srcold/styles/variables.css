@@ -1,0 +1,126 @@
+:root {
+
+  /* ─── PRIMARY COLORS ─────────────────────── */
+  --color-primary:        #818CF8;   /* Bright indigo — pops on dark bg */
+  --color-primary-dark:   #6366F1;   /* Hover / active state */
+  --color-primary-light:  #A5B4FC;   /* Subtle accents */
+  --color-primary-bg:     rgba(129, 140, 248, 0.15);   /* Glass tint bg */
+
+  /* ─── SECONDARY / ACCENT ─────────────────── */
+  --color-accent:         #22D3EE;   /* Cyan/teal — highlights, badges */
+  --color-accent-dark:    #06B6D4;
+  --color-accent-bg:      rgba(34, 211, 238, 0.15);
+
+  /* ─── SUCCESS / WARNING / ERROR / INFO ───── */
+  --color-success:        #34D399;
+  --color-success-bg:     rgba(52, 211, 153, 0.15);
+  --color-warning:        #FBBF24;
+  --color-warning-bg:     rgba(251, 191, 36, 0.15);
+  --color-error:          #F87171;
+  --color-error-bg:       rgba(248, 113, 113, 0.15);
+  --color-info:           #60A5FA;
+  --color-info-bg:        rgba(96, 165, 250, 0.15);
+
+  /* ─── NEUTRALS ───────────────────────────── */
+  --color-white:          #FFFFFF;
+  --color-bg:             #171B2E;   /* Lighter navy page background */
+  --color-surface:        rgba(190, 178, 178, 0.09);   /* Glass cards, modals — more visible */
+  --color-border:         rgba(255, 255, 255, 0.16);   /* Borders, dividers */
+  --color-border-focus:   #818CF8;   /* Input focus ring */
+
+  /* ─── TEXT ───────────────────────────────── */
+  --color-text-primary:   #eaeef1;   /* Headings */
+  --color-text-secondary: #06090e;   /* Body, labels */
+  --color-text-muted:     #7b7d80;   /* Placeholders, hints */
+  --color-text-inverse:   #d9dce7;   /* Text on light/bright bg */
+
+  /* ─── LEVEL BADGE COLORS ─────────────────── */
+  --color-beginner:       #34D399;   /* Green */
+  --color-beginner-bg:    rgba(52, 211, 153, 0.15);
+  --color-intermediate:   #FBBF24;   /* Amber */
+  --color-intermediate-bg:rgba(251, 191, 36, 0.15);
+  --color-advanced:       #F87171;   /* Red */
+  --color-advanced-bg:    rgba(248, 113, 113, 0.15);
+
+  /* ─── LEADERBOARD RANK COLORS ────────────── */
+  --color-gold:           #FBBF24;
+  --color-silver:         #CBD5E1;
+  --color-bronze:         #D97757;
+
+  /* ─── TYPOGRAPHY (unchanged) ─────────────── */
+  --font-primary:   'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1rem;
+  --text-lg:    1.125rem;
+  --text-xl:    1.25rem;
+  --text-2xl:   1.5rem;
+  --text-3xl:   1.875rem;
+  --text-4xl:   2.25rem;
+  --text-5xl:   3rem;
+
+  --font-normal:    400;
+  --font-medium:    500;
+  --font-semibold:  600;
+  --font-bold:      700;
+  --font-extrabold: 800;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.75;
+
+  /* ─── SPACING (unchanged) ────────────────── */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
+
+  /* ─── BORDER RADIUS (unchanged) ──────────── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ─── SHADOWS ─────────────────────────────
+     Dark bg නිසා shadows වඩාත් strong/deep කරලා,
+     glass card වලට "glow" එකක් දෙන්න primary shadow එකකුත් දාලා
+  ─────────────────────────────────────────── */
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:  0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg:  0 10px 15px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-xl:  0 20px 25px rgba(0, 0, 0, 0.5), 0 10px 10px rgba(0, 0, 0, 0.3);
+  --shadow-primary: 0 4px 20px rgba(129, 140, 248, 0.4);
+
+  /* ─── TRANSITIONS (unchanged) ────────────── */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ─── LAYOUT (unchanged) ─────────────────── */
+  --container-max:     1200px;
+  --navbar-height:     68px;
+  --sidebar-width:     260px;
+  --footer-height:     80px;
+
+  /* ─── Z-INDEX (unchanged) ────────────────── */
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-navbar:    300;
+  --z-sidebar:   400;
+  --z-modal:     500;
+  --z-toast:     600;
+  --z-tooltip:   700;
+}

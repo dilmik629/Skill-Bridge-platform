@@ -1,0 +1,65 @@
+/* ============================================
+   SKILL-BRIDGE — Avatar Styles
+   ============================================ */
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+}
+
+/* ─── Sizes ──────────────────────────────────── */
+.avatar--xs { width: 24px;  height: 24px; }
+.avatar--sm { width: 32px;  height: 32px; }
+.avatar--md { width: 40px;  height: 40px; }
+.avatar--lg { width: 56px;  height: 56px; }
+.avatar--xl { width: 80px;  height: 80px; }
+
+/* ─── Image ──────────────────────────────────── */
+.avatar__img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+/* ─── Initials Fallback ──────────────────────── */
+.avatar__initials {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: var(--font-bold);
+  line-height: 1;
+  user-select: none;
+}
+
+.avatar--xs  .avatar__initials { font-size: 0.6rem; }
+.avatar--sm  .avatar__initials { font-size: 0.7rem; }
+.avatar--md  .avatar__initials { font-size: var(--text-sm); }
+.avatar--lg  .avatar__initials { font-size: var(--text-xl); }
+.avatar--xl  .avatar__initials { font-size: var(--text-2xl); }
+
+/* ─── Online Dot ─────────────────────────────── */
+.avatar__online-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-success);
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-full);
+}
+
+.avatar--lg .avatar__online-dot { width: 13px; height: 13px; }
+.avatar--xl .avatar__online-dot { width: 16px; height: 16px; }
+
+/* ─── Leaderboard Rank Rings ─────────────────── */
+.avatar--gold   { box-shadow: 0 0 0 3px var(--color-gold),   0 0 0 5px rgba(245,158,11,0.2); }
+.avatar--silver { box-shadow: 0 0 0 3px var(--color-silver), 0 0 0 5px rgba(148,163,184,0.2); }
+.avatar--bronze { box-shadow: 0 0 0 3px var(--color-bronze), 0 0 0 5px rgba(180,83,9,0.2); }

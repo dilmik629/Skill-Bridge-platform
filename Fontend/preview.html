@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillBridge — Full Preview</title>
+<style>
+/* ══ Design Tokens ══════════════════════════════════════════ */
+:root {
+  --primary:      #4F46E5;
+  --primary-dark: #3730A3;
+  --primary-bg:   #EEF2FF;
+  --accent:       #06B6D4;
+  --success:      #10B981;
+  --success-bg:   #D1FAE5;
+  --warning:      #F59E0B;
+  --warning-bg:   #FEF3C7;
+  --error:        #EF4444;
+  --error-bg:     #FEE2E2;
+  --text-1:       #0F172A;
+  --text-2:       #475569;
+  --text-3:       #94A3B8;
+  --border:       #E2E8F0;
+  --surface:      #FFFFFF;
+  --bg:           #F8FAFC;
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    16px;
+  --radius-xl:    20px;
+  --radius-full:  999px;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:    0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg:    0 8px 24px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text-1);font-size:14px;line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,textarea,select{font-family:inherit;outline:none}
+
+/* ══ Layout ═══════════════════════════════════════════════ */
+.app{display:flex;flex-direction:column;min-height:100vh}
+.layout-admin{display:flex;min-height:100vh}
+.main-content{flex:1;overflow:hidden}
+.page{display:none;animation:fadeUp .3s ease both}
+.page.active{display:block}
+.page-scroll{display:none;overflow-y:auto;height:calc(100vh - 64px);animation:fadeUp .3s ease both}
+.page-scroll.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ Navbar ════════════════════════════════════════════════ */
+.navbar{background:var(--surface);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 24px;gap:24px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.nav-logo{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--text-1)}
+.nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.nav-logo span{color:var(--primary)}
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{padding:6px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text-2);transition:all .2s;cursor:pointer;border:none;background:none}
+.nav-link:hover,.nav-link.active{background:var(--primary-bg);color:var(--primary);font-weight:600}
+.nav-link.community{color:var(--warning)}
+.nav-link.community:hover,.nav-link.community.active{background:var(--warning-bg);color:#D97706}
+.nav-actions{display:flex;gap:8px;align-items:center;margin-left:auto}
+.nav-bell{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer;position:relative;transition:all .2s}
+.nav-bell:hover{background:var(--primary-bg);color:var(--primary);border-color:var(--primary)}
+.nav-bell .badge{position:absolute;top:-4px;right:-4px;background:var(--error);color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white}
+.nav-av{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;cursor:pointer}
+
+/* ══ Sidebar (Admin) ═══════════════════════════════════════ */
+.sidebar{width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;flex-shrink:0}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:18px 16px;border-bottom:1px solid var(--border);font-size:16px;font-weight:800;letter-spacing:-.02em}
+.sidebar-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
+.sidebar-logo span{color:var(--primary)}
+.admin-badge{margin:10px 12px;background:var(--primary-bg);color:var(--primary);font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius-full);width:fit-content;text-transform:uppercase;letter-spacing:.06em}
+.sidebar-nav{flex:1;padding:8px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all .2s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--bg);color:var(--text-1)}
+.sidebar-item.active{background:var(--primary-bg);color:var(--primary);font-weight:600}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-user-name{font-size:12px;font-weight:600}
+.sidebar-user-email{font-size:10px;color:var(--text-3)}
+
+/* ══ Buttons ═══════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:var(--radius-sm)}
+.btn-lg{padding:11px 24px;font-size:14px}
+.btn-full{width:100%;justify-content:center}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,.25)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.btn-secondary{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-secondary:hover{background:var(--primary-bg)}
+.btn-ghost{background:#fff;color:var(--text-2);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--text-3);color:var(--text-1)}
+.btn-success{background:var(--success);color:#fff;box-shadow:0 2px 8px rgba(16,185,129,.25)}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{background:#DC2626}
+.btn-warning{background:var(--warning);color:#fff}
+
+/* ══ Cards ══════════════════════════════════════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm)}
+.card-elevated{box-shadow:var(--shadow-md)}
+.card:hover{box-shadow:var(--shadow-md)}
+
+/* ══ Badges ════════════════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 9px;border-radius:var(--radius-full);white-space:nowrap}
+.badge-green{background:var(--success-bg);color:#065F46}
+.badge-amber{background:var(--warning-bg);color:#92400E}
+.badge-red{background:var(--error-bg);color:#991B1B}
+.badge-indigo{background:var(--primary-bg);color:#3730A3}
+.badge-blue{background:#DBEAFE;color:#1E40AF}
+.badge-gray{background:var(--border);color:var(--text-2)}
+.badge-cyan{background:#ECFEFF;color:#164E63}
+
+/* ══ Stats ══════════════════════════════════════════════════ */
+.stats{display:grid;gap:16px;margin-bottom:24px}
+.stats-4{grid-template-columns:repeat(4,1fr)}
+.stats-3{grid-template-columns:repeat(3,1fr)}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);transition:all .2s}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.stat-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.si-indigo{background:var(--primary-bg)}
+.si-green{background:var(--success-bg)}
+.si-amber{background:var(--warning-bg)}
+.si-cyan{background:#ECFEFF}
+.si-red{background:var(--error-bg)}
+.stat-num{font-size:22px;font-weight:800;color:var(--text-1);line-height:1}
+.stat-label{font-size:11px;color:var(--text-3);font-weight:500;margin-top:3px}
+
+/* ══ Table ══════════════════════════════════════════════════ */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.table-toolbar{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.search-box{flex:1;position:relative}
+.search-box input{width:100%;padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);transition:border .2s}
+.search-box input:focus{border-color:var(--primary);background:#fff}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:13px}
+.filter-sel{padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg);color:var(--text-2)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg)}
+th{padding:9px 16px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap}
+td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--bg)}
+.tbl-actions{display:flex;gap:6px}
+.tbl-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text-2);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:13px}
+.tbl-btn:hover{background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
+.tbl-btn.danger:hover{background:var(--error-bg);border-color:var(--error);color:var(--error)}
+.tbl-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3)}
+
+/* ══ Form ═══════════════════════════════════════════════════ */
+.form-group{display:flex;flex-direction:column;gap:14px}
+.form-field label{display:block;font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:5px}
+.form-field input,.form-field textarea,.form-field select{width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:13px;transition:border .2s}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-hint{font-size:11px;color:var(--text-3);margin-top:3px}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.form-section-title{font-size:14px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+/* ══ Quiz ═══════════════════════════════════════════════════ */
+.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.quiz-q-num{font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.quiz-timer{font-size:14px;font-weight:700;color:var(--primary);background:var(--primary-bg);padding:4px 12px;border-radius:var(--radius-full)}
+.quiz-timer.warn{color:var(--error);background:var(--error-bg);animation:pulse 1s infinite}
+.quiz-title{font-size:15px;font-weight:600;margin-bottom:12px}
+.progress-bar{height:6px;background:var(--border);border-radius:var(--radius-full);overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#818CF8);border-radius:var(--radius-full);transition:width .4s ease}
+.quiz-body{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow-sm)}
+.quiz-question{font-size:16px;font-weight:600;color:var(--text-1);margin-bottom:20px;line-height:1.6}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.quiz-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:var(--primary);background:var(--primary-bg)}
+.quiz-option.selected{border-color:var(--primary);background:var(--primary-bg)}
+.quiz-opt-letter{width:30px;height:30px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
+.quiz-option.selected .quiz-opt-letter{background:var(--primary);color:#fff}
+.quiz-opt-text{font-size:13px;font-weight:500}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.quiz-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1}
+.quiz-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.quiz-dot.current{background:var(--primary)}
+.quiz-dot.answered{background:var(--success)}
+
+/* ══ Podium ════════════════════════════════════════════════ */
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-bottom:32px;padding:24px}
+.podium-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px 24px;text-align:center;box-shadow:var(--shadow-md);transition:all .2s}
+.podium-card:hover{transform:translateY(-4px)}
+.podium-card.first{border-color:#F59E0B;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);transform:scale(1.05)}
+.podium-card.second{transform:scale(.95)}
+.podium-card.third{transform:scale(.9)}
+.podium-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#fff;margin:0 auto 10px}
+.podium-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.podium-pts{font-size:18px;font-weight:800;color:var(--primary)}
+.podium-sub{font-size:11px;color:var(--text-3)}
+
+/* ══ Star rating ════════════════════════════════════════════ */
+.stars{display:flex;gap:4px;cursor:pointer}
+.star{font-size:24px;color:#D1D5DB;transition:color .15s}
+.star.active{color:#F59E0B}
+.star:hover{color:#F59E0B;transform:scale(1.2)}
+
+/* ══ Misc ═══════════════════════════════════════════════════ */
+.section{padding:64px 0}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.page-header{margin-bottom:28px}
+.page-eyebrow{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.page-title{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.page-sub{font-size:14px;color:var(--text-3);margin-top:4px}
+.page-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.empty{text-align:center;padding:60px 0;color:var(--text-3)}
+.empty-icon{font-size:3rem;margin-bottom:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease}
+.modal{background:#fff;border-radius:var(--radius-xl);max-width:460px;width:90%;box-shadow:0 20px 40px rgba(0,0,0,.15);animation:fadeUp .25s ease both}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:600}
+.modal-close{width:28px;height:28px;border-radius:var(--radius-sm);background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--bg);color:var(--text-1)}
+.modal-body{padding:20px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.admin-content{flex:1;overflow-y:auto;padding:28px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-2{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.score-slider{width:100%;accent-color:var(--primary);cursor:pointer}
+.notif-item{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;cursor:pointer;transition:background .2s}
+.notif-item:hover{background:var(--bg)}
+.notif-item.unread{background:#F0F4FF}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:5px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PUBLIC SECTION                                          -->
+<!-- ════════════════════════════════════════════════════════ -->
+
+<!-- NAVBAR (Public) -->
+<nav class="navbar" id="pub-navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🎓</div>
+    Skill<span>Bridge</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPublic('home',this)">Home</button>
+    <button class="nav-link" onclick="showPublic('projects',this)">Projects</button>
+    <button class="nav-link community" onclick="showPublic('community',this)">🌟 Community</button>
+    <button class="nav-link" onclick="showPublic('leaderboard-pub',this)">Leaderboard</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost btn-sm" onclick="switchMode('student')">Login</button>
+    <button class="btn btn-primary btn-sm" onclick="showPublic('register',this)">Get Started</button>
+  </div>
+</nav>
+
+<!-- ── HOME ─────────────────────────────────────── -->
+<div class="page-scroll active" id="pg-home">
+  <!-- Hero -->
+  <section style="background:linear-gradient(135deg,#3730A3,#4F46E5,#0891B2);padding:80px 0;text-align:center;position:relative;overflow:hidden">
+    <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(6,182,212,.15);filter:blur(60px);top:-100px;right:-100px"></div>
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(129,140,248,.15);filter:blur(60px);bottom:-80px;left:-80px"></div>
+    <div class="container" style="position:relative;z-index:1">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:6px 16px;border-radius:999px;margin-bottom:24px">🚀 Learn by Doing — Real Projects, Real Skills</div>
+      <h1 style="font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;line-height:1.15;letter-spacing:-.02em;margin-bottom:20px">Build Real Projects.<br><span style="background:linear-gradient(90deg,#67E8F9,#A5F3FC);-background-clip:text;-webkit-text-fill-color:transparent">Earn Real Skills.</span></h1>
+      <p style="font-size:16px;color:rgba(255,255,255,.80);max-width:520px;margin:0 auto 36px;line-height:1.7">Apply for curated projects, prove your skills with quizzes, get admin feedback, and build a portfolio that stands out.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-lg" style="background:#fff;color:var(--primary);font-weight:700" onclick="switchMode('student')">🚀 Get Started Free</button>
+        <button class="btn btn-lg" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35)" onclick="showPublic('projects',document.querySelectorAll('.nav-link')[1])">🔍 Browse Projects →</button>
+      </div>
+    </div>
+  </section>
+  <!-- Stats -->
+  <section style="background:#fff;border-bottom:1px solid var(--border);padding:32px 0">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center">
+        <div><div style="font-size:1.8rem;margin-bottom:4px">📁</div><div style="font-size:24px;font-weight:800;color:var(--primary)">120+</div><div style="font-size:12px;color:var(--text-3);font-weight:500">Live Projects</div></div>
+        <div><div style="font-size:1.8rem;margin-bottom:4px">🧑‍💻</div><div style="font-size:24px;font-weight:800;color:var(--primary)">2.4k+</div><div style="font-size:12px;color:var(--text-3);font-weight:500">Active Students</div></div>
+        <div><div style="font-size:1.8rem;margin-bottom:4px">✅</div><div style="font-size:24px;font-weight:800;color:var(--primary)">98%</div><div style="font-size:12px;color:var(--text-3);font-weight:500">Completion Rate</div></div>
+        <div><div style="font-size:1.8rem;margin-bottom:4px">⚡</div><div style="font-size:24px;font-weight:800;color:var(--primary)">50+</div><div style="font-size:12px;color:var(--text-3);font-weight:500">Skills Covered</div></div>
+      </div>
+    </div>
+  </section>
+  <!-- How it works -->
+  <section style="padding:60px 0">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:40px"><p style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">How It Works</p><h2 style="font-size:26px;font-weight:800">Simple Steps to Success</h2></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div class="card" style="text-align:center"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem">🔍</div><div style="font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;letter-spacing:.06em">STEP 01</div><h3 style="font-size:13px;font-weight:600;margin-bottom:6px">Browse Projects</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6">Find projects that match your skill level.</p></div>
+        <div class="card" style="text-align:center"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem">🧠</div><div style="font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;letter-spacing:.06em">STEP 02</div><h3 style="font-size:13px;font-weight:600;margin-bottom:6px">Pass the Quiz</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6">Take a skill quiz to prove you're ready.</p></div>
+        <div class="card" style="text-align:center"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem">💻</div><div style="font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;letter-spacing:.06em">STEP 03</div><h3 style="font-size:13px;font-weight:600;margin-bottom:6px">Build & Submit</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6">Work on project and submit via GitHub.</p></div>
+        <div class="card" style="text-align:center"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem">🏆</div><div style="font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px;letter-spacing:.06em">STEP 04</div><h3 style="font-size:13px;font-weight:600;margin-bottom:6px">Get Reviewed</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6">Admin reviews, feedback, and skill points.</p></div>
+      </div>
+    </div>
+  </section>
+  <!-- Featured Projects -->
+  <section style="padding:60px 0;background:#fff;border-top:1px solid var(--border)">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px"><div><p style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Live Now</p><h2 style="font-size:22px;font-weight:800">Featured Projects</h2></div><button class="btn btn-secondary btn-sm" onclick="showPublic('projects',document.querySelectorAll('.nav-link')[1])">View All →</button></div>
+      <div class="grid-3">
+        <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🌐</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">E-Commerce Website with React</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6;flex:1">Build a fully functional e-commerce platform with product listings, cart, checkout flow, and order management.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-amber">Intermediate</span><span class="badge badge-indigo" style="font-size:10px">React</span><span class="badge badge-indigo" style="font-size:10px">Laravel</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 15</span><span style="color:var(--primary);font-weight:600">Apply →</span></div></div>
+        <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="width:44px;height:44px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🎨</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">Portfolio Website Design</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6;flex:1">Design and build a beautiful personal portfolio website showcasing your skills and projects.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-green">Beginner</span><span class="badge badge-indigo" style="font-size:10px">HTML/CSS</span><span class="badge badge-indigo" style="font-size:10px">Figma</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 22</span><span style="color:var(--primary);font-weight:600">Apply →</span></div></div>
+        <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="width:44px;height:44px;background:#F3E8FF;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🤖</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">AI Chatbot Integration</h3><p style="font-size:12px;color:var(--text-3);line-height:1.6;flex:1">Build an AI-powered chatbot using Python and integrate it into a web interface using NLP libraries.</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-red">Advanced</span><span class="badge badge-indigo" style="font-size:10px">Python</span><span class="badge badge-indigo" style="font-size:10px">FastAPI</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Aug 1</span><span style="color:var(--primary);font-weight:600">Apply →</span></div></div>
+      </div>
+    </div>
+  </section>
+  <!-- CTA -->
+  <section style="background:linear-gradient(135deg,#3730A3,#4F46E5);padding:60px 0;text-align:center">
+    <div class="container"><h2 style="font-size:28px;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:-.02em">Ready to Start Building?</h2><p style="font-size:15px;color:rgba(255,255,255,.80);margin-bottom:28px">Join thousands of students building real projects.</p><div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><button class="btn btn-lg" style="background:#fff;color:var(--primary);font-weight:700" onclick="switchMode('student')">🚀 Create Free Account</button><button class="btn btn-lg" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35)" onclick="showPublic('projects',document.querySelectorAll('.nav-link')[1])">Browse Projects →</button></div></div>
+  </section>
+</div>
+
+<!-- ── PROJECTS ───────────────────────────────── -->
+<div class="page-scroll" id="pg-projects">
+  <div class="container" style="padding-top:32px;padding-bottom:32px">
+    <div style="margin-bottom:24px"><p class="page-eyebrow">Browse</p><h1 class="page-title">🔍 All Projects</h1><p class="page-sub">Find projects that match your skills.</p></div>
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px;position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-3)">🔍</span><input placeholder="Search projects..." style="width:100%;padding:9px 14px 9px 32px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:13px"></div>
+      <div style="display:flex;background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);padding:3px;gap:3px">
+        <button class="btn btn-sm" style="background:var(--primary);color:#fff">All</button>
+        <button class="btn btn-sm btn-ghost" style="border:none">Beginner</button>
+        <button class="btn btn-sm btn-ghost" style="border:none">Intermediate</button>
+        <button class="btn btn-sm btn-ghost" style="border:none">Advanced</button>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🌐</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">E-Commerce Website with React</h3><p style="font-size:12px;color:var(--text-3);flex:1">Build a fully functional e-commerce platform with cart and checkout.</p><div style="display:flex;gap:6px"><span class="badge badge-amber">Intermediate</span><span class="badge badge-indigo" style="font-size:10px">React</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 15</span><span>👥 3/5</span></div></div>
+      <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🎨</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">Portfolio Website Design</h3><p style="font-size:12px;color:var(--text-3);flex:1">Design and build a beautiful portfolio website with animations.</p><div style="display:flex;gap:6px"><span class="badge badge-green">Beginner</span><span class="badge badge-indigo" style="font-size:10px">CSS</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 22</span><span>👥 2/8</span></div></div>
+      <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:#F3E8FF;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🤖</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">AI Chatbot Integration</h3><p style="font-size:12px;color:var(--text-3);flex:1">Build an AI-powered chatbot using Python and NLP libraries.</p><div style="display:flex;gap:6px"><span class="badge badge-red">Advanced</span><span class="badge badge-indigo" style="font-size:10px">Python</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Aug 1</span><span>👥 1/3</span></div></div>
+      <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:var(--warning-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">⚙️</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">REST API with Laravel</h3><p style="font-size:12px;color:var(--text-3);flex:1">Build a complete RESTful API with Sanctum auth and CRUD.</p><div style="display:flex;gap:6px"><span class="badge badge-amber">Intermediate</span><span class="badge badge-indigo" style="font-size:10px">Laravel</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 25</span><span>👥 0/4</span></div></div>
+      <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showPublic('project-detail',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:#FCE7F3;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">📱</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">Mobile App UI Design</h3><p style="font-size:12px;color:var(--text-3);flex:1">Design a complete mobile app UI in Figma with prototypes.</p><div style="display:flex;gap:6px"><span class="badge badge-green">Beginner</span><span class="badge badge-indigo" style="font-size:10px">Figma</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);padding-top:10px;border-top:1px solid var(--border)"><span>📅 Jul 18</span><span>👥 2/6</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROJECT DETAIL ──────────────────────────── -->
+<div class="page-scroll" id="pg-project-detail">
+  <div class="container" style="max-width:700px;padding-top:32px;padding-bottom:32px">
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:20px" onclick="showPublic('projects',document.querySelectorAll('.nav-link')[1])">← Back to Projects</button>
+    <div class="card card-elevated" style="margin-bottom:20px">
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+        <div style="width:56px;height:56px;background:var(--primary-bg);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0">🌐</div>
+        <div style="flex:1"><h1 style="font-size:20px;font-weight:800;margin-bottom:8px">E-Commerce Website with React</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge badge-amber">Intermediate</span><span class="badge badge-green">Open</span><span class="badge badge-indigo">Web Development</span></div></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:20px">Build a fully functional e-commerce platform with product listings, shopping cart, checkout flow, and order management. Use React for the frontend and connect to a Laravel REST API backend with MySQL database.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:var(--bg);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;text-align:center">
+        <div><div style="font-size:1.4rem;margin-bottom:4px">📅</div><div style="font-size:16px;font-weight:700">Jul 15</div><div style="font-size:11px;color:var(--text-3)">Deadline</div></div>
+        <div><div style="font-size:1.4rem;margin-bottom:4px">👥</div><div style="font-size:16px;font-weight:700">3 / 5</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
+        <div><div style="font-size:1.4rem;margin-bottom:4px">🧠</div><div style="font-size:16px;font-weight:700">5 Questions</div><div style="font-size:11px;color:var(--text-3)">Quiz Required</div></div>
+      </div>
+      <div style="margin-bottom:20px"><h3 style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px">🛠️ Tech Stack</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><span style="background:var(--primary-bg);color:var(--primary);border:1px solid rgba(79,70,229,.15);padding:4px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600">React</span><span style="background:var(--primary-bg);color:var(--primary);border:1px solid rgba(79,70,229,.15);padding:4px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600">Laravel</span><span style="background:var(--primary-bg);color:var(--primary);border:1px solid rgba(79,70,229,.15);padding:4px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600">MySQL</span><span style="background:var(--primary-bg);color:var(--primary);border:1px solid rgba(79,70,229,.15);padding:4px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600">Tailwind CSS</span></div></div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="switchMode('student')">🧠 Take Quiz to Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── COMMUNITY ──────────────────────────────── -->
+<div class="page-scroll" id="pg-community">
+  <div class="container" style="padding-top:32px;padding-bottom:32px">
+    <div style="margin-bottom:24px"><p class="page-eyebrow">Community</p><h1 class="page-title">🌟 Project Showcase</h1><p class="page-sub">Browse approved student projects and leave peer reviews.</p></div>
+    <div class="grid-3">
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="width:36px;height:36px;background:#4F46E5;font-size:13px">D</div><div><div style="font-size:13px;font-weight:600">Dilmi Silva</div><div style="font-size:11px;color:var(--text-3)">🐙 @dilmi</div></div><span class="badge badge-amber" style="margin-left:auto">Intermediate</span></div>
+        <div><h3 style="font-size:14px;font-weight:600;margin-bottom:2px">E-Commerce Website</h3><span style="font-size:11px;color:var(--text-3)">🌐 Web Development</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">React</span><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">Laravel</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)"><div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star">★</span></div><span style="font-size:11px;color:var(--text-3)">4.0 (12 reviews)</span></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1">🐙 GitHub</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="openReviewModal()">⭐ Review</button></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="width:36px;height:36px;background:#7C3AED;font-size:13px">T</div><div><div style="font-size:13px;font-weight:600">Tharindu P.</div><div style="font-size:11px;color:var(--text-3)">🐙 @tharindu</div></div><span class="badge badge-green" style="margin-left:auto">Beginner</span></div>
+        <div><h3 style="font-size:14px;font-weight:600;margin-bottom:2px">Portfolio Website</h3><span style="font-size:11px;color:var(--text-3)">🎨 UI/UX Design</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">HTML/CSS</span><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">JS</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)"><div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span></div><span style="font-size:11px;color:var(--text-3)">5.0 (8 reviews)</span></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1">🐙 GitHub</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="openReviewModal()">⭐ Review</button></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="width:36px;height:36px;background:#DB2777;font-size:13px">K</div><div><div style="font-size:13px;font-weight:600">Kavya Sharma</div><div style="font-size:11px;color:var(--text-3)">🐙 @kavya</div></div><span class="badge badge-red" style="margin-left:auto">Advanced</span></div>
+        <div><h3 style="font-size:14px;font-weight:600;margin-bottom:2px">AI Chatbot</h3><span style="font-size:11px;color:var(--text-3)">🤖 AI/ML</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">Python</span><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">FastAPI</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)"><div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star">★</span></div><span style="font-size:11px;color:var(--text-3)">3.8 (5 reviews)</span></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1">🐙 GitHub</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="openReviewModal()">⭐ Review</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEADERBOARD (Public) ───────────────────── -->
+<div class="page-scroll" id="pg-leaderboard-pub">
+  <div class="container" style="padding-top:32px;padding-bottom:32px">
+    <div style="margin-bottom:24px"><p class="page-eyebrow">Rankings</p><h1 class="page-title">🏆 Leaderboard</h1><p class="page-sub">Top students ranked by project scores and peer reviews.</p></div>
+    <div class="podium">
+      <div class="podium-card second"><div style="font-size:1.8rem;margin-bottom:8px">🥈</div><div class="podium-av" style="background:#7C3AED;margin-bottom:10px">T</div><div class="podium-name">Tharindu P.</div><div class="podium-pts">1,105</div><div class="podium-sub">12 projects</div></div>
+      <div class="podium-card first"><div style="font-size:2rem;margin-bottom:8px">🥇</div><div class="podium-av" style="background:#4F46E5;width:64px;height:64px;font-size:22px;margin-bottom:10px">K</div><div class="podium-name" style="font-size:15px">Kavya Sharma</div><div class="podium-pts" style="font-size:22px">1,240</div><div class="podium-sub">14 projects</div></div>
+      <div class="podium-card third"><div style="font-size:1.6rem;margin-bottom:8px">🥉</div><div class="podium-av" style="background:#06B6D4;margin-bottom:10px">D</div><div class="podium-name">Dilmi Silva</div><div class="podium-pts">840</div><div class="podium-sub">9 projects</div></div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th style="width:48px">#</th><th>Student</th><th>Projects</th><th>Points</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--text-3)">4</td><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:32px;height:32px;background:#DB2777;font-size:12px">A</div>Ama Perera</div></td><td>8 done</td><td style="font-weight:800;color:var(--primary)">780</td></tr>
+        <tr><td style="font-weight:700;color:var(--text-3)">5</td><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:32px;height:32px;background:#059669;font-size:12px">R</div>Ruwan K.</div></td><td>7 done</td><td style="font-weight:800;color:var(--primary)">720</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ── REGISTER ───────────────────────────────── -->
+<div class="page-scroll" id="pg-register" style="display:none">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;background:var(--bg)">
+    <div style="max-width:420px;width:100%;background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow-md)">
+      <div style="text-align:center;margin-bottom:24px"><div style="font-size:2rem;margin-bottom:8px">🎉</div><h2 style="font-size:20px;font-weight:800;margin-bottom:4px">Create account</h2><p style="font-size:13px;color:var(--text-3)">Free forever · No credit card needed</p></div>
+      <div class="form-group">
+        <div class="form-field"><label>😊 Full Name</label><input placeholder="Your full name"></div>
+        <div class="form-field"><label>📧 Email</label><input type="email" placeholder="you@example.com"></div>
+        <div class="form-row">
+          <div class="form-field"><label>🔒 Password</label><input type="password" placeholder="Min 8 chars"></div>
+          <div class="form-field"><label>🔁 Confirm</label><input type="password" placeholder="Repeat"></div>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="switchMode('student')">🚀 Create Account</button>
+        <p style="text-align:center;font-size:13px;color:var(--text-3)">Already have an account? <a href="#" style="color:var(--primary);font-weight:600" onclick="switchMode('student')">Sign in →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- STUDENT SECTION                                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="student-section" style="display:none">
+  <nav class="navbar">
+    <div class="nav-logo"><div class="nav-logo-icon">🎓</div>Skill<span>Bridge</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="showStudent('s-dashboard',this)">Dashboard</button>
+      <button class="nav-link" onclick="showStudent('s-projects',this)">Projects</button>
+      <button class="nav-link" onclick="showStudent('s-my-projects',this)">My Projects</button>
+      <button class="nav-link community" onclick="showStudent('s-community',this)">🌟 Community</button>
+      <button class="nav-link" onclick="showStudent('s-leaderboard',this)">Leaderboard</button>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-bell" onclick="showStudent('s-notifications',null)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="badge">3</span></div>
+      <div class="nav-av" onclick="showStudent('s-profile',null)">D</div>
+      <button class="btn btn-ghost btn-sm" onclick="switchMode('public')">⏏ Logout</button>
+    </div>
+  </nav>
+
+  <div style="overflow-y:auto;height:calc(100vh - 64px)">
+    <!-- STUDENT DASHBOARD -->
+    <div class="page active" id="pg-s-dashboard">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div class="page-top"><div><p class="page-eyebrow">Student Dashboard</p><h1 class="page-title">Hey, Dilmi 👋</h1><p class="page-sub">Here's what's happening with your learning journey.</p></div><button class="btn btn-primary" onclick="showStudent('s-projects',null)">🔍 Browse Projects</button></div>
+        <div class="stats stats-4">
+          <div class="stat-card"><div class="stat-icon si-indigo">📁</div><div><div class="stat-num">3</div><div class="stat-label">Active Projects</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">✅</div><div><div class="stat-num">6</div><div class="stat-label">Completed</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">🏆</div><div><div class="stat-num">#12</div><div class="stat-label">Leaderboard Rank</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-cyan">⚡</div><div><div class="stat-num">840</div><div class="stat-label">Skill Points</div></div></div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:16px;font-weight:700">📁 Active Projects</h2><button class="btn btn-ghost btn-sm" onclick="showStudent('s-my-projects',null)">View all →</button></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🌐</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">E-Commerce Website</div><div style="display:flex;gap:6px"><span class="badge badge-amber">Intermediate</span><span class="badge badge-blue">In Progress</span></div></div><button class="btn btn-primary btn-sm" onclick="showStudent('s-submit',null)">Submit</button></div>
+              <div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🎨</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">Portfolio Website</div><div style="display:flex;gap:6px"><span class="badge badge-green">Beginner</span><span class="badge badge-blue">In Progress</span></div></div><button class="btn btn-primary btn-sm" onclick="showStudent('s-submit',null)">Submit</button></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card card-elevated">
+              <h3 style="font-size:14px;font-weight:600;margin-bottom:14px">🔗 Quick Links</h3>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <button class="btn btn-ghost btn-full" style="justify-content:flex-start;gap:10px" onclick="showStudent('s-profile',null)"><span>👤</span>Edit Profile</button>
+                <button class="btn btn-ghost btn-full" style="justify-content:flex-start;gap:10px" onclick="showStudent('s-portfolio',null)"><span>🎯</span>My Portfolio</button>
+                <button class="btn btn-ghost btn-full" style="justify-content:flex-start;gap:10px" onclick="showStudent('s-progress',null)"><span>📊</span>Progress Tracker</button>
+                <button class="btn btn-ghost btn-full" style="justify-content:flex-start;gap:10px" onclick="showStudent('s-leaderboard',null)"><span>🏆</span>Leaderboard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ PAGE -->
+    <div class="page" id="pg-s-quiz">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div class="quiz-wrap">
+          <div class="quiz-header">
+            <div class="quiz-meta"><div class="quiz-q-num">Question 1 of 5</div><div class="quiz-timer">⏱️ 07:30</div></div>
+            <div class="quiz-title">🧠 E-Commerce Website — Skill Quiz</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+          </div>
+          <div class="quiz-body">
+            <p class="quiz-question">1. What does JSX stand for in React?</p>
+            <div class="quiz-options">
+              <div class="quiz-option selected" onclick="selectOpt(this)"><div class="quiz-opt-letter">A</div><div class="quiz-opt-text">JavaScript XML</div></div>
+              <div class="quiz-option" onclick="selectOpt(this)"><div class="quiz-opt-letter">B</div><div class="quiz-opt-text">Java Syntax Extension</div></div>
+              <div class="quiz-option" onclick="selectOpt(this)"><div class="quiz-opt-letter">C</div><div class="quiz-opt-text">JSON XML</div></div>
+              <div class="quiz-option" onclick="selectOpt(this)"><div class="quiz-opt-letter">D</div><div class="quiz-opt-text">JavaScript Extension</div></div>
+            </div>
+            <div class="quiz-nav">
+              <button class="btn btn-ghost btn-sm" disabled>← Previous</button>
+              <div class="quiz-dots"><div class="quiz-dot current"></div><div class="quiz-dot"></div><div class="quiz-dot"></div><div class="quiz-dot"></div><div class="quiz-dot"></div></div>
+              <button class="btn btn-primary btn-sm" onclick="showStudent('s-quiz-result',null)">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ RESULT -->
+    <div class="page" id="pg-s-quiz-result">
+      <div class="container" style="max-width:520px;padding-top:40px;text-align:center">
+        <div class="card card-elevated" style="padding:40px">
+          <div style="font-size:4rem;margin-bottom:16px">🎉</div>
+          <h1 style="font-size:24px;font-weight:800;margin-bottom:8px">Quiz Passed!</h1>
+          <p style="color:var(--text-3);margin-bottom:24px">You scored above the minimum 70% requirement.</p>
+          <div style="font-size:5rem;font-weight:900;color:var(--success);line-height:1;margin-bottom:8px">80</div>
+          <p style="font-size:13px;color:var(--text-3);margin-bottom:28px">4 out of 5 correct</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-primary btn-full btn-lg" onclick="showStudent('s-dashboard',null)">✅ Apply for Project</button>
+            <button class="btn btn-ghost btn-full" onclick="showStudent('s-projects',null)">🔍 Browse More Projects</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY PROJECTS -->
+    <div class="page" id="pg-s-my-projects">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div class="page-top"><div><p class="page-eyebrow">My Work</p><h1 class="page-title">📁 My Projects</h1></div><button class="btn btn-primary" onclick="showStudent('s-projects',null)">＋ Find New</button></div>
+        <div class="stats stats-4">
+          <div class="stat-card"><div class="stat-icon si-indigo">⚡</div><div><div class="stat-num">3</div><div class="stat-label">Active</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">✅</div><div><div class="stat-num">6</div><div class="stat-label">Completed</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div><div class="stat-num">1</div><div class="stat-label">Pending Review</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-cyan">📊</div><div><div class="stat-num">10</div><div class="stat-label">Total</div></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🌐</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">E-Commerce Website</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-amber">Intermediate</span><span class="badge badge-blue">Submitted</span></div></div><div style="display:flex;gap:8px"><a href="#" class="btn btn-ghost btn-sm">🐙 GitHub</a></div></div>
+          <div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🎨</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">Portfolio Website</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-green">Beginner</span><span class="badge badge-green">Approved</span><span style="font-size:11px;font-weight:700;color:var(--success)">⭐ 92/100</span></div><div style="font-size:11px;color:var(--text-3);margin-top:6px;background:var(--bg);padding:6px 10px;border-radius:var(--radius-sm);border-left:3px solid var(--primary)">💬 Great work! Clean design and responsive layout.</div></div></div>
+          <div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:42px;height:42px;background:#F3E8FF;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🤖</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:4px">AI Chatbot</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-red">Advanced</span><span class="badge badge-blue">In Progress</span></div></div><button class="btn btn-primary btn-sm" onclick="showStudent('s-submit',null)">📤 Submit</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT PROJECT -->
+    <div class="page" id="pg-s-submit">
+      <div class="container" style="max-width:600px;padding-top:28px;padding-bottom:28px">
+        <div style="margin-bottom:24px"><p class="page-eyebrow">Submission</p><h1 class="page-title">📤 Submit Your Work</h1><p class="page-sub">Share your GitHub repo and notes for the admin reviewer.</p></div>
+        <div class="card card-elevated">
+          <div class="form-group">
+            <div class="form-field"><label>🔗 GitHub Repository URL</label><input type="url" value="https://github.com/dilmi/ecommerce-app" placeholder="https://github.com/..."><p class="form-hint">Make sure the repo is public</p></div>
+            <div class="form-field"><label>📝 Notes for Admin (Optional)</label><textarea rows="4" placeholder="Describe what you built, challenges, features...">Built full cart + checkout flow. Used React Context for state. Had some trouble with CORS but fixed it.</textarea></div>
+            <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="showStudent('s-dashboard',null)">← Cancel</button><button class="btn btn-primary" style="flex:1" onclick="showStudent('s-dashboard',null)">🚀 Submit Project</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="page" id="pg-s-notifications">
+      <div class="container" style="max-width:620px;padding-top:28px;padding-bottom:28px">
+        <div class="page-top"><div><p class="page-eyebrow">Inbox</p><h1 class="page-title">🔔 Notifications <span style="background:var(--error);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px">3</span></h1></div><button class="btn btn-ghost btn-sm">✓ Mark all read</button></div>
+        <div class="table-wrap">
+          <div class="notif-item unread"><div style="width:38px;height:38px;border-radius:var(--radius-md);background:var(--success-bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🎉</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Project Approved!</div><div style="font-size:12px;color:var(--text-3)">Your "Portfolio Website" was approved! Score: 92/100</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-size:11px;color:var(--text-3)">2h ago</span><div class="notif-dot"></div></div></div>
+          <div class="notif-item unread"><div style="width:38px;height:38px;border-radius:var(--radius-md);background:var(--primary-bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">⭐</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">New Peer Review!</div><div style="font-size:12px;color:var(--text-3)">Tharindu gave your portfolio 5 stars!</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-size:11px;color:var(--text-3)">5h ago</span><div class="notif-dot"></div></div></div>
+          <div class="notif-item unread"><div style="width:38px;height:38px;border-radius:var(--radius-md);background:#ECFEFF;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🧠</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Quiz Passed!</div><div style="font-size:12px;color:var(--text-3)">You scored 80% on the E-Commerce Website quiz.</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-size:11px;color:var(--text-3)">1d ago</span><div class="notif-dot"></div></div></div>
+          <div class="notif-item"><div style="width:38px;height:38px;border-radius:var(--radius-md);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🔔</div><div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Welcome to SkillBridge!</div><div style="font-size:12px;color:var(--text-3)">Start by browsing projects and taking your first quiz.</div></div><span style="font-size:11px;color:var(--text-3)">3d ago</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="pg-s-profile">
+      <div class="container" style="max-width:680px;padding-top:28px;padding-bottom:28px">
+        <div style="background:linear-gradient(135deg,#3730A3,#4F46E5);border-radius:var(--radius-xl);padding:28px;display:flex;align-items:center;gap:20px;color:#fff;margin-bottom:20px">
+          <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;flex-shrink:0">D</div>
+          <div><div style="font-size:20px;font-weight:800;margin-bottom:4px">Dilmi Silva</div><div style="font-size:13px;opacity:.75;margin-bottom:12px">📧 dilmi@demo.com</div><div style="display:flex;gap:8px;flex-wrap:wrap"><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px">🎓 Student</span><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px">⚡ 840 points</span><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px">🐙 @dilmi</span></div></div>
+          <button class="btn btn-sm" style="margin-left:auto;color:#fff;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15)">✏️ Edit</button>
+        </div>
+        <div class="card"><h3 style="font-size:14px;font-weight:600;margin-bottom:16px">👤 About</h3>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-3);width:100px;flex-shrink:0">Full Name</span><span style="font-weight:500">Dilmi Silva</span></div>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-3);width:100px;flex-shrink:0">Email</span><span style="font-weight:500">dilmi@demo.com</span></div>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-3);width:100px;flex-shrink:0">GitHub</span><span style="font-weight:500">@dilmi</span></div>
+          <div style="display:flex;gap:12px;padding:10px 0;font-size:13px"><span style="color:var(--text-3);width:100px;flex-shrink:0">Bio</span><span style="font-weight:500">Full-stack developer learning through real projects on SkillBridge.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO, LEADERBOARD, PROGRESS, COMMUNITY — simplified versions -->
+    <div class="page" id="pg-s-portfolio">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div style="background:linear-gradient(135deg,#3730A3,#4F46E5);border-radius:var(--radius-xl);padding:40px;text-align:center;color:#fff;margin-bottom:24px">
+          <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 12px">D</div>
+          <h1 style="font-size:22px;font-weight:800;margin-bottom:4px">Dilmi Silva</h1>
+          <p style="opacity:.75;margin-bottom:14px">Full-Stack Developer</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px">🌐 Web Dev</span><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px">⚙️ Backend</span></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:24px"><button class="btn btn-primary">🔗 Share Portfolio</button><button class="btn btn-secondary">📄 Export PDF</button></div>
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">📁 Completed Projects</h2>
+        <div class="card" style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px"><div style="width:44px;height:44px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🎨</div><div style="flex:1"><h3 style="font-size:14px;font-weight:600;margin-bottom:6px">Portfolio Website</h3><div style="display:flex;gap:6px;margin-bottom:8px"><span class="badge badge-green">Beginner</span><span class="badge badge-green">Approved</span><span style="font-size:11px;font-weight:700;color:var(--success)">⭐ 92/100</span></div><div style="display:flex;gap:6px"><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">HTML</span><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">CSS</span></div></div><button class="btn btn-ghost btn-sm">🐙 GitHub</button></div>
+      </div>
+    </div>
+    <div class="page" id="pg-s-leaderboard">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div class="page-top"><div><p class="page-eyebrow">Rankings</p><h1 class="page-title">🏆 Leaderboard</h1></div></div>
+        <div class="podium"><div class="podium-card second"><div style="font-size:1.8rem;margin-bottom:6px">🥈</div><div class="podium-av" style="background:#7C3AED">T</div><div class="podium-name">Tharindu</div><div class="podium-pts">1,105</div></div><div class="podium-card first"><div style="font-size:2rem;margin-bottom:6px">🥇</div><div class="podium-av" style="background:#4F46E5;width:60px;height:60px;font-size:20px">K</div><div class="podium-name">Kavya</div><div class="podium-pts" style="font-size:20px">1,240</div></div><div class="podium-card third"><div style="font-size:1.5rem;margin-bottom:6px">🥉</div><div class="podium-av" style="background:#06B6D4">D</div><div class="podium-name">Dilmi</div><div class="podium-pts">840</div></div></div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>Student</th><th>Projects</th><th>Points</th></tr></thead><tbody>
+          <tr style="background:#EEF2FF"><td style="font-weight:700;color:var(--primary)">12</td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:30px;height:30px;background:#06B6D4;font-size:11px">D</div>Dilmi Silva <span style="font-size:10px;font-weight:700;color:var(--primary);margin-left:4px">YOU</span></div></td><td>9</td><td style="font-weight:800;color:var(--primary)">840</td></tr>
+          <tr><td style="font-weight:700;color:var(--text-3)">13</td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:30px;height:30px;background:#DB2777;font-size:11px">A</div>Ama Perera</div></td><td>8</td><td style="font-weight:800;color:var(--primary)">780</td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+    <div class="page" id="pg-s-progress">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div style="margin-bottom:24px"><p class="page-eyebrow">Your Growth</p><h1 class="page-title">📊 Progress Tracker</h1></div>
+        <div class="grid-2">
+          <div>
+            <h2 style="font-size:16px;font-weight:700;margin-bottom:16px">📁 Active Projects</h2>
+            <div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:40px;height:40px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem">🌐</div><div style="flex:1"><div style="font-size:13px;font-weight:600">E-Commerce Website</div><span class="badge badge-amber">Intermediate</span></div></div><div style="height:6px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:4px"><div style="height:100%;background:linear-gradient(90deg,var(--primary),#818CF8);width:65%;border-radius:999px"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)"><span>Progress</span><span>65%</span></div></div>
+          </div>
+          <div>
+            <div class="card"><h3 style="font-size:14px;font-weight:600;margin-bottom:14px">⚡ Skills</h3>
+              <div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>React</span><span style="color:var(--primary);font-weight:700">82%</span></div><div style="height:5px;background:var(--border);border-radius:999px;overflow:hidden"><div style="height:100%;background:var(--primary);width:82%"></div></div></div>
+              <div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Laravel</span><span style="color:var(--primary);font-weight:700">65%</span></div><div style="height:5px;background:var(--border);border-radius:999px;overflow:hidden"><div style="height:100%;background:var(--primary);width:65%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>MySQL</span><span style="color:var(--primary);font-weight:700">70%</span></div><div style="height:5px;background:var(--border);border-radius:999px;overflow:hidden"><div style="height:100%;background:var(--primary);width:70%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="pg-s-community">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div style="margin-bottom:24px"><p class="page-eyebrow">Community</p><h1 class="page-title">🌟 Project Showcase</h1></div>
+        <div class="grid-3">
+          <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:34px;height:34px;background:#7C3AED;font-size:12px">T</div><div><div style="font-size:13px;font-weight:600">Tharindu P.</div><div style="font-size:11px;color:var(--text-3)">🐙 @tharindu</div></div><span class="badge badge-green" style="margin-left:auto">Beginner</span></div><h3 style="font-size:14px;font-weight:600">Portfolio Website</h3><div style="display:flex;gap:4px"><span style="background:var(--primary-bg);color:var(--primary);padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600">HTML/CSS</span></div><div style="display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border)"><div style="display:flex;gap:2px"><span style="color:#F59E0B">★★★★★</span></div><span style="font-size:11px;color:var(--text-3)">5.0 (8)</span></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1">🐙 GitHub</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="openReviewModal()">⭐ Review</button></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="pg-s-projects">
+      <div class="container" style="padding-top:28px;padding-bottom:28px">
+        <div style="margin-bottom:24px"><p class="page-eyebrow">Browse</p><h1 class="page-title">🔍 All Projects</h1></div>
+        <div class="grid-3">
+          <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="showStudent('s-quiz',null)"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:var(--primary-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🌐</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">E-Commerce Website</h3><p style="font-size:12px;color:var(--text-3);flex:1">Build a fully functional e-commerce platform.</p><div style="display:flex;gap:6px"><span class="badge badge-amber">Intermediate</span></div><button class="btn btn-primary btn-sm btn-full" onclick="showStudent('s-quiz',null)">🧠 Take Quiz to Apply</button></div>
+          <div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between"><div style="width:44px;height:44px;background:var(--success-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🎨</div><span class="badge badge-green">Open</span></div><h3 style="font-size:14px;font-weight:600">Portfolio Website</h3><p style="font-size:12px;color:var(--text-3);flex:1">Design a beautiful portfolio website.</p><div style="display:flex;gap:6px"><span class="badge badge-green">Beginner</span></div><button class="btn btn-primary btn-sm btn-full" onclick="showStudent('s-quiz',null)">🧠 Take Quiz to Apply</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- ADMIN SECTION                                           -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="admin-section" style="display:none" class="layout-admin">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sidebar-logo-icon">🎓</div>Skill<span>Bridge</span></div>
+    <div class="admin-badge">Admin Panel</div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-item active" onclick="showAdmin('a-dashboard',this)"><span>📊</span>Dashboard</button>
+      <button class="sidebar-item" onclick="showAdmin('a-projects',this)"><span>📁</span>Projects</button>
+      <button class="sidebar-item" onclick="showAdmin('a-quizzes',this)"><span>🧠</span>Quizzes</button>
+      <button class="sidebar-item" onclick="showAdmin('a-submissions',this)"><span>📤</span>Submissions</button>
+      <button class="sidebar-item" onclick="showAdmin('a-review',this)"><span>👁️</span>Review</button>
+      <button class="sidebar-item" onclick="showAdmin('a-users',this)"><span>👥</span>Users</button>
+      <button class="sidebar-item" onclick="showAdmin('a-reports',this)"><span>📊</span>Reports</button>
+    </nav>
+    <div class="sidebar-footer"><div class="avatar" style="width:34px;height:34px;background:var(--primary);font-size:12px">A</div><div style="flex:1;min-width:0"><div class="sidebar-user-name">Admin User</div><div class="sidebar-user-email">admin@skillbridge.com</div></div><button class="btn btn-ghost btn-sm" onclick="switchMode('public')" style="font-size:12px;padding:4px 8px">⏏</button></div>
+  </aside>
+  <div class="main-content">
+    <div class="admin-content">
+
+      <!-- ADMIN DASHBOARD -->
+      <div class="page active" id="pg-a-dashboard">
+        <div class="page-top"><div><p class="page-eyebrow">Overview</p><h1 class="page-title">📊 Admin Dashboard</h1><p class="page-sub">Welcome back! Here's what's happening.</p></div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="showAdmin('a-projects',document.querySelectorAll('.sidebar-item')[1])">📁 Projects</button><button class="btn btn-primary btn-sm" onclick="showAdmin('a-submissions',document.querySelectorAll('.sidebar-item')[3])">📤 Submissions</button></div></div>
+        <div class="stats stats-4">
+          <div class="stat-card"><div class="stat-icon si-indigo">👥</div><div><div class="stat-num">248</div><div class="stat-label">Total Students</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-cyan">📁</div><div><div class="stat-num">5</div><div class="stat-label">Active Projects</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">📤</div><div><div class="stat-num">3</div><div class="stat-label">Pending Review</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">✅</div><div><div class="stat-num">7</div><div class="stat-label">Approved Today</div></div></div>
+        </div>
+        <div class="table-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)"><h3 style="font-size:14px;font-weight:600">📤 Recent Submissions</h3><button class="btn btn-ghost btn-sm" onclick="showAdmin('a-submissions',document.querySelectorAll('.sidebar-item')[3])">View all →</button></div>
+          <table><thead><tr><th>Student</th><th>Project</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;background:#4F46E5;font-size:11px">D</div>Dilmi Silva</div></td><td>E-Commerce Website</td><td><span class="badge badge-blue">Submitted</span></td><td><button class="btn btn-primary btn-sm" onclick="showAdmin('a-review',document.querySelectorAll('.sidebar-item')[4])">Review</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;background:#7C3AED;font-size:11px">T</div>Tharindu P.</div></td><td>REST API</td><td><span class="badge badge-blue">Submitted</span></td><td><button class="btn btn-primary btn-sm" onclick="showAdmin('a-review',document.querySelectorAll('.sidebar-item')[4])">Review</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ADMIN PROJECTS -->
+      <div class="page" id="pg-a-projects">
+        <div class="page-top"><div><p class="page-eyebrow">Manage</p><h1 class="page-title">📁 Projects</h1></div><button class="btn btn-primary" onclick="showAdmin('a-project-create',null)">➕ New Project</button></div>
+        <div class="stats stats-3">
+          <div class="stat-card"><div class="stat-icon si-indigo">📁</div><div><div class="stat-num">5</div><div class="stat-label">Total</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">🟢</div><div><div class="stat-num">5</div><div class="stat-label">Open</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">🔒</div><div><div class="stat-num">0</div><div class="stat-label">Closed</div></div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar"><div class="search-box"><span class="search-icon">🔍</span><input placeholder="Search projects..."></div><select class="filter-sel"><option>All Status</option><option>Open</option><option>Closed</option></select></div>
+          <table><thead><tr><th>Project</th><th>Category</th><th>Level</th><th>Students</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">E-Commerce Website</td><td><span class="badge badge-indigo">Web Dev</span></td><td><span class="badge badge-amber">Intermediate</span></td><td><span style="font-size:12px;color:var(--text-3)">3/5</span></td><td style="color:var(--text-3)">Jul 15</td><td><span class="badge badge-green">Open</span></td><td><div class="tbl-actions"><button class="tbl-btn" onclick="showAdmin('a-project-create',null)">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">Portfolio Website</td><td><span class="badge badge-cyan">UI/UX</span></td><td><span class="badge badge-green">Beginner</span></td><td><span style="font-size:12px;color:var(--text-3)">2/8</span></td><td style="color:var(--text-3)">Jul 22</td><td><span class="badge badge-green">Open</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">AI Chatbot</td><td><span class="badge badge-indigo">AI/ML</span></td><td><span class="badge badge-red">Advanced</span></td><td><span style="font-size:12px;color:var(--text-3)">1/3</span></td><td style="color:var(--text-3)">Aug 1</td><td><span class="badge badge-green">Open</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">REST API with Laravel</td><td><span class="badge badge-indigo">Backend</span></td><td><span class="badge badge-amber">Intermediate</span></td><td><span style="font-size:12px;color:var(--text-3)">0/4</span></td><td style="color:var(--text-3)">Jul 25</td><td><span class="badge badge-green">Open</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">Mobile App UI</td><td><span class="badge badge-cyan">UI/UX</span></td><td><span class="badge badge-green">Beginner</span></td><td><span style="font-size:12px;color:var(--text-3)">2/6</span></td><td style="color:var(--text-3)">Jul 18</td><td><span class="badge badge-green">Open</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+          </tbody></table>
+          <div class="tbl-footer"><span>Showing 5 projects</span></div>
+        </div>
+      </div>
+
+      <!-- PROJECT CREATE -->
+      <div class="page" id="pg-a-project-create">
+        <div class="page-top"><div><p class="page-eyebrow">Projects</p><h1 class="page-title">➕ Create New Project</h1></div><button class="btn btn-ghost" onclick="showAdmin('a-projects',document.querySelectorAll('.sidebar-item')[1])">← Back</button></div>
+        <div style="max-width:700px">
+          <div class="form-section"><div class="form-section-title">📝 Basic Information</div><div class="form-group"><div class="form-field"><label>Project Title *</label><input placeholder="e.g. E-Commerce Website with React"></div><div class="form-field"><label>Description *</label><textarea rows="4" placeholder="Describe the project requirements..."></textarea></div><div class="form-row"><div class="form-field"><label>Category *</label><select><option>Select category...</option><option>Web Development</option><option>UI/UX</option><option>Backend</option><option>AI/ML</option></select></div><div class="form-field"><label>Level *</label><select><option>Select level...</option><option>🟢 Beginner</option><option>🟡 Intermediate</option><option>🔴 Advanced</option></select></div></div><div class="form-field"><label>Tech Stack</label><input placeholder="React, Laravel, MySQL, Tailwind"><p class="form-hint">Comma separated</p></div></div></div>
+          <div class="form-section"><div class="form-section-title">⚙️ Settings</div><div class="form-group"><div class="form-row"><div class="form-field"><label>Deadline *</label><input type="date"></div><div class="form-field"><label>Max Students *</label><input type="number" placeholder="e.g. 5"></div></div><div class="form-field"><label>Status</label><select><option>Open</option><option>Closed</option></select></div></div></div>
+          <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="showAdmin('a-projects',document.querySelectorAll('.sidebar-item')[1])">← Cancel</button><button class="btn btn-primary" style="flex:1" onclick="showAdmin('a-projects',document.querySelectorAll('.sidebar-item')[1])">✅ Create Project</button></div>
+        </div>
+      </div>
+
+      <!-- QUIZZES -->
+      <div class="page" id="pg-a-quizzes">
+        <div class="page-top"><div><p class="page-eyebrow">Manage</p><h1 class="page-title">🧠 Quizzes</h1></div><button class="btn btn-primary">➕ New Quiz</button></div>
+        <div class="table-wrap">
+          <div class="table-toolbar"><div class="search-box"><span class="search-icon">🔍</span><input placeholder="Search quizzes..."></div></div>
+          <table><thead><tr><th>Project</th><th>Level</th><th>Questions</th><th>Pass Mark</th><th>Pass Rate</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">E-Commerce Website</td><td><span class="badge badge-amber">Intermediate</span></td><td>5 Qs</td><td>70%</td><td><span style="color:var(--success);font-weight:700">80%</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">Portfolio Website</td><td><span class="badge badge-green">Beginner</span></td><td>5 Qs</td><td>70%</td><td><span style="color:var(--success);font-weight:700">91%</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td style="font-weight:600">AI Chatbot</td><td><span class="badge badge-red">Advanced</span></td><td>5 Qs</td><td>70%</td><td><span style="color:var(--warning);font-weight:700">60%</span></td><td><div class="tbl-actions"><button class="tbl-btn">✏️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- SUBMISSIONS -->
+      <div class="page" id="pg-a-submissions">
+        <div class="page-top"><div><p class="page-eyebrow">Review Queue</p><h1 class="page-title">📤 Submissions <span style="background:var(--error);color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;margin-left:8px">3 pending</span></h1></div></div>
+        <div class="stats stats-4">
+          <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div><div class="stat-num">3</div><div class="stat-label">Pending</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-indigo">👁️</div><div><div class="stat-num">1</div><div class="stat-label">Reviewed</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">✅</div><div><div class="stat-num">4</div><div class="stat-label">Approved</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-red">❌</div><div><div class="stat-num">1</div><div class="stat-label">Rejected</div></div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar"><div class="search-box"><span class="search-icon">🔍</span><input placeholder="Search student or project..."></div><select class="filter-sel"><option>All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
+          <table><thead><tr><th>Student</th><th>Project</th><th>Level</th><th>Submitted</th><th>Status</th><th>Score</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;background:#4F46E5;font-size:11px">D</div>Dilmi Silva</div></td><td>E-Commerce Website</td><td><span class="badge badge-amber">Intermediate</span></td><td style="color:var(--text-3);font-size:12px">2h ago</td><td><span class="badge badge-blue">Submitted</span></td><td style="color:var(--text-3)">—</td><td><button class="btn btn-primary btn-sm" onclick="showAdmin('a-review',document.querySelectorAll('.sidebar-item')[4])">👁️ Review</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;background:#7C3AED;font-size:11px">T</div>Tharindu P.</div></td><td>REST API</td><td><span class="badge badge-amber">Intermediate</span></td><td style="color:var(--text-3);font-size:12px">4h ago</td><td><span class="badge badge-blue">Submitted</span></td><td style="color:var(--text-3)">—</td><td><button class="btn btn-primary btn-sm" onclick="showAdmin('a-review',document.querySelectorAll('.sidebar-item')[4])">👁️ Review</button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;background:#DB2777;font-size:11px">A</div>Ama Perera</div></td><td>Portfolio Website</td><td><span class="badge badge-green">Beginner</span></td><td style="color:var(--text-3);font-size:12px">1d ago</td><td><span class="badge badge-green">Approved</span></td><td style="font-weight:700;color:var(--success)">92/100</td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- REVIEW -->
+      <div class="page" id="pg-a-review">
+        <div class="page-top"><div><p class="page-eyebrow">Submissions</p><h1 class="page-title">👁️ Review Submission</h1></div><button class="btn btn-ghost" onclick="showAdmin('a-submissions',document.querySelectorAll('.sidebar-item')[3])">← Back</button></div>
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card"><h3 style="font-size:14px;font-weight:600;margin-bottom:14px">👤 Submission Info</h3><div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:var(--radius-lg);margin-bottom:14px"><div class="avatar" style="width:44px;height:44px;background:#4F46E5;font-size:16px">D</div><div><div style="font-weight:600">Dilmi Silva</div><div style="font-size:12px;color:var(--text-3)">dilmi@demo.com</div></div><div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:var(--text-3)">Submitted</div><div style="font-size:12px;font-weight:500">2 hours ago</div></div></div><div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-3);width:70px">Project</span><span style="font-weight:500">E-Commerce Website</span></div><div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px"><span style="color:var(--text-3);width:70px">Level</span><span class="badge badge-amber">Intermediate</span></div></div>
+            <div class="card"><h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🐙 GitHub Repository</h3><div style="padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:13px;color:var(--primary);font-weight:500">🔗 github.com/dilmi/ecommerce-app ↗</div></div>
+            <div class="card"><h3 style="font-size:14px;font-weight:600;margin-bottom:10px">📝 Student Notes</h3><p style="font-size:13px;color:var(--text-2);line-height:1.7;background:var(--bg);padding:14px;border-radius:var(--radius-md);border-left:3px solid var(--primary)">Built full cart + checkout flow. Used React Context for state management. Had some trouble with CORS but fixed it using Laravel middleware.</p></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-elevated">
+              <h3 style="font-size:14px;font-weight:600;margin-bottom:16px">⭐ Score & Feedback</h3>
+              <div style="text-align:center;background:var(--bg);padding:20px;border-radius:var(--radius-lg);margin-bottom:16px">
+                <div id="score-val" style="font-size:48px;font-weight:900;color:var(--success);line-height:1">75</div>
+                <div style="font-size:11px;color:var(--text-3);margin-bottom:12px">out of 100</div>
+                <input type="range" class="score-slider" min="0" max="100" value="75" oninput="updateScore(this.value)" style="width:100%">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:6px"><span>0</span><span id="score-label" style="color:var(--success);font-weight:700">✅ Pass</span><span>100</span></div>
+              </div>
+              <div class="form-field" style="margin-bottom:16px"><label>📝 Feedback</label><textarea rows="4" placeholder="Provide constructive feedback...">Great work overall! The cart functionality works well. Consider adding input validation on checkout and improving mobile responsiveness.</textarea></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <button class="btn btn-success btn-full btn-lg" onclick="showAdmin('a-submissions',document.querySelectorAll('.sidebar-item')[3])">✅ Approve Submission</button>
+                <button class="btn btn-danger btn-full" onclick="showAdmin('a-submissions',document.querySelectorAll('.sidebar-item')[3])">❌ Reject Submission</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="page" id="pg-a-users">
+        <div class="page-top"><div><p class="page-eyebrow">Manage</p><h1 class="page-title">👥 Users</h1><p class="page-sub">5 registered students.</p></div></div>
+        <div class="stats stats-3">
+          <div class="stat-card"><div class="stat-icon si-indigo">👥</div><div><div class="stat-num">5</div><div class="stat-label">Total</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">🟢</div><div><div class="stat-num">5</div><div class="stat-label">Active</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">⚡</div><div><div class="stat-num">778</div><div class="stat-label">Avg Points</div></div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar"><div class="search-box"><span class="search-icon">🔍</span><input placeholder="Search by name or email..."></div></div>
+          <table><thead><tr><th>Student</th><th>Points</th><th>Submissions</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:32px;height:32px;background:#4F46E5;font-size:12px">K</div><div><div style="font-weight:600;font-size:13px">Kavya Sharma</div><div style="font-size:11px;color:var(--text-3)">kavya@demo.com</div></div></div></td><td style="font-weight:700;color:var(--primary)">1,240</td><td>14</td><td style="font-size:12px;color:var(--text-3)">Jan 2025</td><td><div class="tbl-actions"><button class="tbl-btn">👁️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:32px;height:32px;background:#7C3AED;font-size:12px">T</div><div><div style="font-weight:600;font-size:13px">Tharindu P.</div><div style="font-size:11px;color:var(--text-3)">tharindu@demo.com</div></div></div></td><td style="font-weight:700;color:var(--primary)">1,105</td><td>12</td><td style="font-size:12px;color:var(--text-3)">Feb 2025</td><td><div class="tbl-actions"><button class="tbl-btn">👁️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+            <tr style="background:#EEF2FF"><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:32px;height:32px;background:#06B6D4;font-size:12px">D</div><div><div style="font-weight:600;font-size:13px">Dilmi Silva</div><div style="font-size:11px;color:var(--text-3)">dilmi@demo.com</div></div></div></td><td style="font-weight:700;color:var(--primary)">840</td><td>9</td><td style="font-size:12px;color:var(--text-3)">Mar 2025</td><td><div class="tbl-actions"><button class="tbl-btn">👁️</button><button class="tbl-btn danger">🗑️</button></div></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="pg-a-reports">
+        <div class="page-top"><div><p class="page-eyebrow">Analytics</p><h1 class="page-title">📊 Reports</h1><p class="page-sub">Export platform data as CSV or PDF.</p></div></div>
+        <div class="stats stats-4">
+          <div class="stat-card"><div class="stat-icon si-indigo">👥</div><div><div class="stat-num">248</div><div class="stat-label">Total Students</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-cyan">📁</div><div><div class="stat-num">5</div><div class="stat-label">Projects</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-amber">📤</div><div><div class="stat-num">9</div><div class="stat-label">Submissions</div></div></div>
+          <div class="stat-card"><div class="stat-icon si-green">✅</div><div><div class="stat-num">78%</div><div class="stat-label">Approval Rate</div></div></div>
+        </div>
+        <div class="grid-3">
+          <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="font-size:2rem">👥</div><div style="font-size:14px;font-weight:600">Student Report</div><div style="font-size:12px;color:var(--text-3);flex:1">All students with points, projects, quiz scores and rank.</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="alert('📥 CSV downloading...')">📄 CSV</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="alert('📥 PDF downloading...')">📑 PDF</button></div></div>
+          <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="font-size:2rem">📁</div><div style="font-size:14px;font-weight:600">Projects Report</div><div style="font-size:12px;color:var(--text-3);flex:1">All projects with status, student count and completion rate.</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="alert('📥 CSV downloading...')">📄 CSV</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="alert('📥 PDF downloading...')">📑 PDF</button></div></div>
+          <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="font-size:2rem">🏆</div><div style="font-size:14px;font-weight:600">Leaderboard Export</div><div style="font-size:12px;color:var(--text-3);flex:1">Current rankings with points breakdown and achievements.</div><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" style="flex:1" onclick="alert('📥 CSV downloading...')">📄 CSV</button><button class="btn btn-primary btn-sm" style="flex:1" onclick="alert('📥 PDF downloading...')">📑 PDF</button></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ REVIEW MODAL ════════════════ -->
+<div class="modal-overlay" id="review-modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hdr"><span class="modal-title">⭐ Leave a Peer Review</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--bg);padding:12px;border-radius:var(--radius-lg);margin-bottom:16px"><div class="avatar" style="width:36px;height:36px;background:#7C3AED;font-size:13px">T</div><div><div style="font-size:13px;font-weight:600">Tharindu P.</div><div style="font-size:11px;color:var(--text-3)">Portfolio Website</div></div></div>
+      <div style="text-align:center;margin-bottom:16px">
+        <p style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px">How would you rate this project?</p>
+        <div class="stars" style="justify-content:center" id="star-row">
+          <span class="star" onclick="setStars(1)">★</span>
+          <span class="star" onclick="setStars(2)">★</span>
+          <span class="star" onclick="setStars(3)">★</span>
+          <span class="star" onclick="setStars(4)">★</span>
+          <span class="star" onclick="setStars(5)">★</span>
+        </div>
+        <p id="star-label" style="font-size:12px;color:var(--text-3);margin-top:6px">Select a rating</p>
+      </div>
+      <div class="form-field"><label>💬 Comment (Optional)</label><textarea rows="3" placeholder="What did you think? What was done well?"></textarea></div>
+      <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitReview()">⭐ Submit Review</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentMode = 'public'
+let starCount = 0
+
+// ── Mode switching ─────────────────────────────
+function switchMode(mode) {
+  document.getElementById('pub-navbar').style.display = 'none'
+  document.getElementById('student-section').style.display = 'none'
+  document.getElementById('admin-section').style.display = 'none'
+
+  // Hide all public pages
+  document.querySelectorAll('.page-scroll').forEach(p => p.classList.remove('active'))
+
+  if (mode === 'public') {
+    document.getElementById('pub-navbar').style.display = 'flex'
+    document.getElementById('pg-home').classList.add('active')
+    document.querySelectorAll('.nav-link').forEach((l,i) => l.classList.toggle('active', i===0))
+    currentMode = 'public'
+  } else if (mode === 'student') {
+    document.getElementById('student-section').style.display = 'block'
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+    showStudent('s-dashboard', null)
+    currentMode = 'student'
+  } else if (mode === 'admin') {
+    document.getElementById('admin-section').style.display = 'flex'
+    currentMode = 'admin'
+  }
+}
+
+// ── Public pages ───────────────────────────────
+function showPublic(id, btn) {
+  document.querySelectorAll('.page-scroll').forEach(p => p.classList.remove('active'))
+  document.getElementById('pg-' + id).classList.add('active')
+  if (btn) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
+    btn.classList.add('active')
+  }
+}
+
+// ── Student pages ──────────────────────────────
+function showStudent(id, btn) {
+  document.querySelectorAll('#student-section .page').forEach(p => p.classList.remove('active'))
+  document.getElementById('pg-' + id)?.classList.add('active')
+  if (btn) {
+    document.querySelectorAll('#student-section .nav-link').forEach(l => l.classList.remove('active'))
+    btn.classList.add('active')
+  }
+}
+
+// ── Admin pages ────────────────────────────────
+function showAdmin(id, btn) {
+  document.querySelectorAll('#admin-section .page').forEach(p => p.classList.remove('active'))
+  document.getElementById('pg-a-' + id.replace('a-',''))?.classList.add('active')
+  if (btn) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+    btn.classList.add('active')
+  }
+}
+
+// ── Quiz option select ─────────────────────────
+function selectOpt(el) {
+  el.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'))
+  el.classList.add('selected')
+}
+
+// ── Score slider ───────────────────────────────
+function updateScore(val) {
+  document.getElementById('score-val').textContent = val
+  const color = val >= 70 ? '#10B981' : val >= 50 ? '#F59E0B' : '#EF4444'
+  document.getElementById('score-val').style.color = color
+  document.getElementById('score-label').textContent = val >= 70 ? '✅ Pass' : '❌ Fail'
+  document.getElementById('score-label').style.color = color
+}
+
+// ── Review modal ───────────────────────────────
+function openReviewModal() {
+  document.getElementById('review-modal').style.display = 'flex'
+}
+function closeModal() {
+  document.getElementById('review-modal').style.display = 'none'
+  setStars(0)
+}
+function setStars(n) {
+  starCount = n
+  const stars = document.querySelectorAll('#star-row .star')
+  stars.forEach((s, i) => s.classList.toggle('active', i < n))
+  const labels = ['Select a rating','😔 Needs improvement','😐 Below average','🙂 Average','😊 Good work!','🤩 Excellent!']
+  document.getElementById('star-label').textContent = labels[n]
+}
+function submitReview() {
+  if (starCount === 0) { alert('Please select a star rating!'); return }
+  closeModal()
+  setTimeout(() => alert('⭐ Review submitted! Thank you for your feedback.'), 200)
+}
+
+// ── Admin shortcut ─────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.altKey && e.key === 'a') switchMode('admin')
+  if (e.altKey && e.key === 's') switchMode('student')
+  if (e.altKey && e.key === 'p') switchMode('public')
+})
+
+// Init
+switchMode('public')
+</script>
+</body>
+</html>

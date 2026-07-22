@@ -1,0 +1,396 @@
+/* ============================================
+   SKILL-BRIDGE — GLOBAL STYLES
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import './variables.css';
+
+/* ─── RESET ──────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  outline: none;
+}
+
+p,
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ─── TYPOGRAPHY ─────────────────────────────── */
+h1 { font-size: var(--text-4xl); font-weight: var(--font-extrabold); line-height: var(--leading-tight); }
+h2 { font-size: var(--text-3xl); font-weight: var(--font-bold);      line-height: var(--leading-tight); }
+h3 { font-size: var(--text-2xl); font-weight: var(--font-semibold);  line-height: var(--leading-tight); }
+h4 { font-size: var(--text-xl);  font-weight: var(--font-semibold);  line-height: var(--leading-tight); }
+h5 { font-size: var(--text-lg);  font-weight: var(--font-medium);    line-height: var(--leading-normal);}
+h6 { font-size: var(--text-base);font-weight: var(--font-medium);    line-height: var(--leading-normal);}
+
+/* ─── LAYOUT UTILITIES ───────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.section {
+  padding-block: var(--space-16);
+}
+
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center     { justify-content: center; }
+.justify-between    { justify-content: space-between; }
+.gap-2  { gap: var(--space-2); }
+.gap-4  { gap: var(--space-4); }
+.gap-6  { gap: var(--space-6); }
+.gap-8  { gap: var(--space-8); }
+
+.grid { display: grid; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+
+/* ─── BUTTON BASE ────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: 1;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  border: 2px solid transparent;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-primary-bg);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+
+.btn-danger {
+  background-color: var(--color-error);
+  color: var(--color-text-inverse);
+  border-color: var(--color-error);
+}
+
+.btn-danger:hover {
+  background-color: #DC2626;
+  border-color: #DC2626;
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--text-base);
+  border-radius: var(--radius-xl);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* ─── CARD ───────────────────────────────────── */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ─── DIVIDER ────────────────────────────────── */
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin-block: var(--space-6);
+}
+
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-block: var(--space-6);
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+/* ─── TEXT UTILITIES ─────────────────────────── */
+.text-primary   { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted     { color: var(--color-text-muted); }
+.text-accent    { color: var(--color-primary); }
+.text-success   { color: var(--color-success); }
+.text-error     { color: var(--color-error); }
+.text-warning   { color: var(--color-warning); }
+
+.text-xs   { font-size: var(--text-xs); }
+.text-sm   { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg   { font-size: var(--text-lg); }
+.text-xl   { font-size: var(--text-xl); }
+
+.font-medium   { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold     { font-weight: var(--font-bold); }
+
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+
+/* ─── SPACING UTILITIES ──────────────────────── */
+.mt-2  { margin-top: var(--space-2); }
+.mt-4  { margin-top: var(--space-4); }
+.mt-6  { margin-top: var(--space-6); }
+.mt-8  { margin-top: var(--space-8); }
+.mb-2  { margin-bottom: var(--space-2); }
+.mb-4  { margin-bottom: var(--space-4); }
+.mb-6  { margin-bottom: var(--space-6); }
+.mb-8  { margin-bottom: var(--space-8); }
+
+/* ─── SCROLLBAR ──────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: var(--color-bg); }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ─── SELECTION ──────────────────────────────── */
+::selection {
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+}
+
+/* ─── FOCUS VISIBLE ──────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── RESPONSIVE BREAKPOINTS ─────────────────── */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .container { padding-inline: var(--space-4); }
+  .section   { padding-block: var(--space-10); }
+
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+
+  .grid-4,
+  .grid-3,
+  .grid-2 { grid-template-columns: 1fr; }
+
+  .hide-mobile { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  .container { padding-inline: var(--space-3); }
+  h1 { font-size: var(--text-2xl); }
+}
+/* ══════════════════════════════════════════════
+   ADMIN BUTTON VARIANTS
+   Add these to src/styles/global.css
+   (or import separately in admin pages)
+══════════════════════════════════════════════ */
+
+/* Ghost small — used in table actions + panels */
+.btn--ghost-sm {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1.5px solid rgba(79,70,229,0.2);
+  background: transparent;
+  color: var(--color-primary, #4F46E5);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn--ghost-sm:hover {
+  background: rgba(79,70,229,0.07);
+  border-color: var(--color-primary, #4F46E5);
+}
+
+/* Danger — full button */
+.btn--danger {
+  padding: 0.65rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 9px;
+  border: none;
+  background: #EF4444;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn--danger:hover { background: #DC2626; }
+
+/* Danger small — table icon button */
+.btn--danger-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1.5px solid rgba(239,68,68,0.25);
+  background: transparent;
+  color: #EF4444;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn--danger-sm:hover {
+  background: rgba(239,68,68,0.08);
+  border-color: #EF4444;
+}
+
+/* Extra-small — tight table CTAs */
+.btn--xs {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+/* Large — hero CTAs */
+.btn--lg {
+  padding: 0.85rem 2rem;
+  font-size: 1rem;
+}
+
+/* Small */
+.btn--sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+}
